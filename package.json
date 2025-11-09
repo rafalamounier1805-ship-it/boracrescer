@@ -1,0 +1,9 @@
+{
+  "name": "bora-crescer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "2.45.4",
+    "openai": "4.68.4"
+  }
+}
