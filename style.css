@@ -1,0 +1,13 @@
+/* --- Add-ons: Login/Perfis --- */
+.avatar small{font-size:.72rem; color:#9aa4c8}
+.avatar{position:relative}
+.kebab{position:absolute; top:6px; right:6px; width:24px; height:24px; 
+  display:grid; place-items:center; border:1px solid var(--line);
+  border-radius:8px; background:#14161a; color:#cfe3ff; cursor:pointer;
+  opacity:.9; transition:transform .12s ease, border-color .2s ease}
+.kebab:hover{transform:translateY(-1px); border-color:#4c5470}
+
+/* Modal pequeno p/ gestão de perfil */
+.modal .sm {width:min(480px,94vw)}
+.input{width:100%; background:#0f1118; border:1px solid #2b3042; 
+  border-radius:10px; color:#e9eeff; padding:8px 10px}

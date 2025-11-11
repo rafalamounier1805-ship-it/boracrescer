@@ -1,0 +1,33 @@
+:root {
+  --bg: #0e0f13;
+  --panel: #171923;
+  --ink: #e9edff;
+  --muted: #a9b0cf;
+  --line: #2b3042;
+  --accent: #f7d040;
+  --accent2: #5fb3ff;
+  --ok: #67e5a1;
+  --warn: #ffb454;
+  --bad: #ff6b6b;
+
+  /* Versão tema alternativa (exemplo) */
+  --theme-metal-bg: #0e0f13;
+  --theme-neon-bg: #001a33;
+  /* … outros */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow: auto; /* modificado para permitir scroll se necessário */
+}
+
+/* Reusar todas as classes de layout/card que você já tinha: .screen, .header, .card, etc */
+/* Mova os estilos inline (style="…") para classes correspondentes aqui. */

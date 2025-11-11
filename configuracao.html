@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bora… Crescer! — Config (v2.5)</title>
+<meta name="theme-color" content="#0e0f13" />
+<style>
+  :root{
+    --bg:#0e0f13; --ink:#eaf0ff; --muted:#a9b0cf; --line:#2b3042;
+    --accent:#5fb3ff; --accent2:#f7d040; --ok:#67e5a1; --warn:#ffb454; --bad:#ff6b6b;
+    --panel:#171923; --panel2:#1c2030; --radius:18px; --pad:14px;
+    --gridSize:56px; --gridDot:1.8px; --gridOpacity:.14; --grainOpacity:.07; --brushOpacity:.18;
+    --shineSpeed:9s;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:Inter,Segoe UI,system-ui,-apple-system,Roboto,Arial,sans-serif}
+  .metal-bg{position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden}
+  .metal-bg::before{content:""; position:absolute; inset:-20% -20% -20% -20%; background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.08), transparent 60%),
+      linear-gradient(115deg, rgba(255,255,255,var(--brushOpacity)) 0%, rgba(255,255,255,0) 18%, rgba(255,255,255,0) 82%, rgba(255,255,255,var(--brushOpacity)) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,var(--grainOpacity)) 0 .7px, transparent 1px 6px);
+    animation:shine var(--shineSpeed) ease-in-out infinite alternate; }
+  .metal-bg::after{content:""; position:absolute; inset:0; opacity:var(--gridOpacity); background-image:radial-gradient(circle, rgba(255,255,255,.28) var(--gridDot), transparent var(--gridDot)); background-size:var(--gridSize) var(--gridSize)}
+  @keyframes shine{from{transform:translate3d(0,0,0)} to{transform:translate3d(0,-6px,0)}}
+
+  .wrap{min-height:100dvh; display:flex; flex-direction:column}
+  header{position:sticky; top:0; z-index:10; backdrop-filter:blur(8px); background:linear-gradient(180deg, rgba(23,25,35,.92), rgba(23,25,35,.78)); border-bottom:1px solid var(--line)}
+  .head{display:flex; align-items:center; justify-content:space-between; padding:10px 14px; gap:10px}
+  .brand{display:flex; align-items:center; gap:10px}
+  .logo{width:38px; height:38px; border-radius:12px; display:grid; place-items:center; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:radial-gradient(140% 140% at 30% 20%, #6ec1ff 0%, #1c2433 45%, #0e0f13 70%); box-shadow: inset 0 0 12px rgba(255,255,255,.15), 0 0 30px rgba(95,179,255,.25)}
+  .brand h1{font-size:16px; margin:0; letter-spacing:.2px}
+  .actions a{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px; color:var(--ink); text-decoration:none; border:1px solid var(--line); background:linear-gradient(180deg, #1b1f2c, #151826)}
+  .actions a:active{transform:translateY(1px)}
+
+  main{flex:1; padding:14px; display:grid; gap:14px; padding-bottom:92px}
+  @media(min-width:720px){ main{max-width:980px; margin:0 auto} }
+
+  .card{background:linear-gradient(180deg, var(--panel), var(--panel2)); border:1px solid var(--line); border-radius:var(--radius); padding:var(--pad); box-shadow: 0 0 0 1px rgba(255,255,255,.03) inset, 0 6px 16px rgba(0,0,0,.35)}
+  .title{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+  .title h2{margin:0; font-size:14px; text-transform:uppercase; letter-spacing:.6px; color:#cfd6f3}
+  .muted{color:var(--muted); font-size:12px}
+  .row{display:grid; gap:10px}
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:719px){ .cols-2,.cols-3{grid-template-columns:1fr} }
+
+  label{font-size:12px; color:#c8d1f1}
+  input,select,textarea,button{max-width:100%}
+  input,select,textarea{width:100%; background:#121523; color:var(--ink); border:1px solid var(--line); border-radius:12px; padding:12px; font-size:14px; outline:none; transition:box-shadow .2s, border-color .2s}
+  textarea{min-height:90px; resize:vertical}
+  .neon:focus{border-color:transparent; box-shadow:0 0 0 2px #101320, 0 0 0 3px var(--accent)}
+
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; background:linear-gradient(180deg, #1d2233, #121523); color:var(--ink); border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-weight:600; transition:transform .06s, box-shadow .2s, border-color .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn.ok{border-color:rgba(103,229,161,.45)}
+  .btn.warn{border-color:rgba(255,180,84,.45)}
+  .btn.bad{border-color:rgba(255,107,107,.45)}
+  .btn.accent{border-color:rgba(95,179,255,.55); box-shadow:0 0 0 1px rgba(95,179,255,.25) inset}
+
+  table{width:100%; border-collapse:separate; border-spacing:0; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px}
+  thead th{background:#1b2030; color:#cfe0ff; text-align:left}
+  tbody tr:hover{background:#151a28}
+  tbody tr:last-child td{border-bottom:0}
+
+  .footer{position:sticky; bottom:0; z-index:10; padding:10px 14px; background:linear-gradient(180deg, rgba(23,25,35,.0), rgba(23,25,35,.85) 20%, rgba(23,25,35,.95)); border-top:1px solid var(--line); display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap}
+  .tabbar{position:fixed; inset:auto 0 0 0; z-index:9; display:flex; gap:8px; justify-content:space-around; background:linear-gradient(180deg, rgba(17,20,35,.0), rgba(17,20,35,.92)); border-top:1px solid var(--line); padding:8px 10px}
+  .tab{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; color:#c7cef3; text-decoration:none}
+  .tab i{width:36px; height:36px; border-radius:12px; display:grid; place-items:center; border:1px solid var(--line); background:linear-gradient(180deg, #1b1f2c, #151826)}
+
+  .debug{font-size:12px; border:1px dashed #3a4566; border-radius:12px; padding:10px; background:#111624}
+</style>
+</head>
+<body>
+<div class="metal-bg"></div>
+<div class="wrap">
+  <header>
+    <div class="head">
+      <div class="brand">
+        <div class="logo"><img src="123.png" alt="logo" onerror="this.remove()"/></div>
+        <h1>Bora… Crescer! <span class="muted">· Config</span></h1>
+      </div>
+      <div class="actions">
+        <a href="index.html" title="Início">🏠</a>
+        <a href="cadastro.html" title="Cadastro">🪪</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- TEMAS & EFEITOS -->
+    <section class="card">
+      <div class="title"><h2>Temas e efeitos</h2><span class="muted">toda mudança aplica na hora</span></div>
+      <div class="row cols-3">
+        <div>
+          <label>Tema</label>
+          <select id="cfg_theme" class="neon" onchange="onThemeChange()">
+            <option value="dark">Escuro</option>
+            <option value="light">Claro</option>
+            <option value="system">Sistema</option>
+          </select>
+        </div>
+        <div>
+          <label>Densidade da grade metálica</label>
+          <select id="cfg_grid" class="neon" onchange="onGridChange()">
+            <option value="56">Padrão</option>
+            <option value="40">Alta</option>
+            <option value="72">Baixa</option>
+          </select>
+        </div>
+        <div>
+          <label>Accent</label>
+          <input id="cfg_accent" class="neon" type="color" value="#5fb3ff" oninput="onAccentChange()">
+        </div>
+      </div>
+    </section>
+
+    <!-- IDIOMAS -->
+    <section class="card">
+      <div class="title"><h2>Idiomas</h2><span class="muted">interface e datas</span></div>
+      <div class="row cols-3">
+        <div>
+          <label>Idioma</label>
+          <select id="cfg_lang" class="neon" onchange="saveLang()">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="en-US">English (US)</option>
+            <option value="es-ES">Español (ES)</option>
+          </select>
+        </div>
+        <div>
+          <label>Formato de data</label>
+          <select id="cfg_date" class="neon" onchange="saveLang()">
+            <option value="dd/mm/yyyy">dd/mm/aaaa</option>
+            <option value="mm/dd/yyyy">mm/dd/yyyy</option>
+            <option value="yyyy-mm-dd">aaaa-mm-dd</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESET -->
+    <section class="card">
+      <div class="title"><h2>Reset</h2><span class="muted">limpeza por dia, por item (1..20) ou geral</span></div>
+      <div class="row cols-3">
+        <div>
+          <label>Escolher dia</label>
+          <input id="reset_date" class="neon" type="date">
+        </div>
+        <div>
+          <label>Item do dia (1..20)</label>
+          <input id="reset_item" class="neon" type="number" min="1" max="20" placeholder="opcional">
+        </div>
+        <div style="align-self:end; display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn warn" onclick="resetDia()">Reset do dia</button>
+          <button class="btn bad" onclick="resetGeral()">Reset geral</button>
+        </div>
+        <div class="muted" style="grid-column:1/-1">
+          Respostas ficam em <code>bc_answers_YYYY-MM-DD</code>. Se informar o <b>Item</b>, zera só aquele índice.
+        </div>
+      </div>
+    </section>
+
+    <!-- INTEGRAÇÕES -->
+    <section class="card">
+      <div class="title"><h2>Integrações</h2><span class="muted">conectores opcionais</span></div>
+      <div class="row cols-3">
+        <div class="switch"><span>Google Sheets</span><input id="int_sheets_on" type="checkbox" onchange="saveIntegr()"></div>
+        <div>
+          <label>ID da Planilha</label>
+          <input id="int_sheet_id" class="neon" placeholder="1AbC..." oninput="saveIntegr()">
+        </div>
+        <div>
+          <label>Apps Script (Web App URL)</label>
+          <input id="int_script" class="neon" placeholder="https://script.google.com/.../exec" oninput="saveIntegr()">
+        </div>
+        <div class="switch"><span>Supabase</span><input id="int_supabase_on" type="checkbox" onchange="saveIntegr()"></div>
+        <div>
+          <label>SUPABASE_URL</label>
+          <input id="int_supabase_url" class="neon" placeholder="https://xyz.supabase.co" oninput="saveIntegr()">
+        </div>
+        <div>
+          <label>SUPABASE_ANON_KEY</label>
+          <input id="int_supabase_key" class="neon" placeholder="ey..." oninput="saveIntegr()">
+        </div>
+        <div class="switch"><span>E-mail SMTP (mailto padrão)</span><input id="int_mail_on" type="checkbox" checked onchange="saveIntegr()"></div>
+        <div>
+          <label>E-mail padrão</label>
+          <input id="int_mail_to" class="neon" type="email" placeholder="voce@empresa.com" oninput="saveIntegr()">
+        </div>
+      </div>
+    </section>
+
+    <!-- METODOLOGIA -->
+    <section class="card" id="metodologia_card">
+      <div class="title"><h2>Metodologia</h2><span class="muted">pontuação · seleção · protocolos · referências</span></div>
+      <div class="row cols-3">
+        <div><label>Peso — Resultado (%)</label><input id="mtd_peso_resultado" class="neon" type="number" min="0" max="100" value="35" oninput="saveMetodologia()"></div>
+        <div><label>Peso — Execução (%)</label><input id="mtd_peso_execucao" class="neon" type="number" min="0" max="100" value="30" oninput="saveMetodologia()"></div>
+        <div><label>Peso — Melhoria Contínua (%)</label><input id="mtd_peso_melhoria" class="neon" type="number" min="0" max="100" value="20" oninput="saveMetodologia()"></div>
+        <div><label>Peso — Efeito/Impacto (%)</label><input id="mtd_peso_efeito" class="neon" type="number" min="0" max="100" value="15" oninput="saveMetodologia()"></div>
+        <div><label>Seleção — Top N por categoria/nível</label><input id="mtd_topn" class="neon" type="number" min="1" max="50" value="10" oninput="saveMetodologia()"></div>
+        <div><label>Regra de desempate</label>
+          <select id="mtd_tie" class="neon" onchange="saveMetodologia()">
+            <option value="impacto">Maior impacto</option>
+            <option value="frequencia">Maior frequência</option>
+            <option value="recencia">Mais recente</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1">
+          <label>Protocolo científico (resumo)</label>
+          <textarea id="mtd_protocolo" class="neon" placeholder="PDCA/Kaizen (Deming/Imai), A3, Kirkpatrick (1-4), ISO 10015 (Treinamento), ISO 31000 (Risco) com FMEA leve, Bloom/Dreyfus para calibrar nível."></textarea>
+        </div>
+        <div style="grid-column:1/-1">
+          <label>Referências (literatura/links)</label>
+          <textarea id="mtd_refs" class="neon" placeholder="Deming (PDCA), Imai (Kaizen), Kirkpatrick, ISO 10015, ISO 31000, Bloom, Dreyfus"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERGUNTAS OFICIAIS -->
+    <section class="card">
+      <div class="title"><h2>Perguntas oficiais (Araujo)</h2><span class="muted">Categoria → Nível → Pergunta (com Cód) • fonte: Sheets</span></div>
+      <div class="row cols-3">
+        <div><label>Categoria</label><select id="sel_area" class="neon"></select></div>
+        <div><label>Nível</label><select id="sel_nivel" class="neon"></select></div>
+        <div><label>Pergunta</label><select id="sel_pergunta" class="neon"></select></div>
+        <div style="grid-column:1/-1">
+          <label>Exemplo/Explicação alinhado à empresa</label>
+          <textarea id="exemplo" class="neon" placeholder="Ex.: No CD, medir produtividade/hora e registrar no sistema. No Lojas, Projeto Pirulito com autorização."></textarea>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn ok" onclick="salvarMapeamento()">Salvar mapeamento</button>
+        <button class="btn warn" onclick="limparMapeamento()">Limpar</button>
+        <button class="btn accent" onclick="sincronizarPerguntas()">🔄 Recarregar da planilha</button>
+      </div>
+      <div id="dbg" class="debug" style="margin-top:10px; display:none"></div>
+      <table style="margin-top:10px">
+        <thead>
+          <tr><th style="width:84px">Cod</th><th>Categoria</th><th>Nível</th><th>Pergunta</th><th>Exemplo</th><th style="width:120px">Ações</th></tr>
+        </thead>
+        <tbody id="mapBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div class="footer">
+    <div class="mini">
+      <button class="btn" onclick="carregarCfg()">Recarregar</button>
+      <button class="btn accent" onclick="salvarCfg()">Salvar Config</button>
+    </div>
+    <div class="mini muted">Config local · Offline-first</div>
+  </div>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html" title="Início"><i>🏠</i><span>Início</span></a>
+    <a class="tab" href="cadastro.html" title="Cadastro"><i>🪪</i><span>Cadastro</span></a>
+    <a class="tab" href="config.html" title="Configurações"><i>⚙️</i><span>Config</span></a>
+  </nav>
+</div>
+
+<script>
+  /* ===== Chaves ===== */
+  const CFG_KEY='bc_config_v2';
+  const MAP_KEY='bc_map_v2';
+  const SUG_KEY='bc_sug_v2';
+  const ANSWERS_PREFIX='bc_answers_';
+  const Q_KEY='bc_questions_v1';
+  const MTD_KEY='bc_metodologia_v1';
+
+  const $=s=>document.querySelector(s);
+  const readCfg=()=>JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+  const writeCfg=c=>localStorage.setItem(CFG_KEY, JSON.stringify(c));
+
+  /* ===== Tema ao vivo ===== */
+  function applyThemeFromCfg(){
+    const c=readCfg();
+    const theme=c.theme||'dark';
+    const accent=c.accent||'#5fb3ff';
+    const grid=c.grid||56;
+    document.documentElement.style.setProperty('--accent', accent);
+    document.documentElement.style.setProperty('--gridSize', grid+'px');
+    if(theme==='light'){
+      document.documentElement.style.setProperty('--bg','#f5f7ff');
+      document.documentElement.style.setProperty('--ink','#0f1320');
+      document.documentElement.style.setProperty('--panel','#ffffff');
+      document.documentElement.style.setProperty('--panel2','#f0f3ff');
+      document.documentElement.style.setProperty('--line','#cfd6f3');
+    }else{
+      document.documentElement.style.setProperty('--bg','#0e0f13');
+      document.documentElement.style.setProperty('--ink','#eaf0ff');
+      document.documentElement.style.setProperty('--panel','#171923');
+      document.documentElement.style.setProperty('--panel2','#1c2030');
+      document.documentElement.style.setProperty('--line','#2b3042');
+    }
+  }
+  function onThemeChange(){const c=readCfg(); c.theme=$('#cfg_theme').value; writeCfg(c); applyThemeFromCfg();}
+  function onGridChange(){const c=readCfg(); c.grid=Number($('#cfg_grid').value||56); writeCfg(c); applyThemeFromCfg();}
+  function onAccentChange(){const c=readCfg(); c.accent=$('#cfg_accent').value; writeCfg(c); applyThemeFromCfg();}
+  function saveLang(){const c=readCfg(); c.lang=$('#cfg_lang').value; c.datefmt=$('#cfg_date').value; writeCfg(c);}
+  function saveIntegr(){const c=readCfg(); c.sheets_on=$('#int_sheets_on').checked; c.sheet_id=$('#int_sheet_id').value?.trim()||''; c.script_url=$('#int_script').value?.trim()||''; c.supabase_on=$('#int_supabase_on').checked; c.supabase_url=$('#int_supabase_url').value?.trim()||''; c.supabase_key=$('#int_supabase_key').value?.trim()||''; c.mail_on=$('#int_mail_on').checked; c.mail_to=$('#int_mail_to').value?.trim()||''; writeCfg(c);}
+  function salvarCfg(){const c=readCfg(); writeCfg(c); alert('Config salva.');}
+  function carregarCfg(){
+    const c=readCfg();
+    if($('#cfg_theme')) $('#cfg_theme').value=c.theme||'dark';
+    if($('#cfg_grid'))  $('#cfg_grid').value=String(c.grid||56);
+    if($('#cfg_accent'))$('#cfg_accent').value=c.accent||'#5fb3ff';
+    if($('#cfg_lang'))  $('#cfg_lang').value=c.lang||'pt-BR';
+    if($('#cfg_date'))  $('#cfg_date').value=c.datefmt||'dd/mm/yyyy';
+    if($('#int_sheets_on')) $('#int_sheets_on').checked=!!c.sheets_on;
+    if($('#int_sheet_id'))  $('#int_sheet_id').value=c.sheet_id||'';
+    if($('#int_script'))    $('#int_script').value=c.script_url||'';
+    if($('#int_supabase_on')) $('#int_supabase_on').checked=!!c.supabase_on;
+    if($('#int_supabase_url')) $('#int_supabase_url').value=c.supabase_url||'';
+    if($('#int_supabase_key')) $('#int_supabase_key').value=c.supabase_key||'';
+    if($('#int_mail_on')) $('#int_mail_on').checked=('mail_on' in c)?!!c.mail_on:true;
+    if($('#int_mail_to')) $('#int_mail_to').value=c.mail_to||'';
+    applyThemeFromCfg();
+    const m=JSON.parse(localStorage.getItem(MTD_KEY)||'{}');
+    if(m){
+      if($('#mtd_peso_resultado')) $('#mtd_peso_resultado').value = m.peso_resultado ?? 35;
+      if($('#mtd_peso_execucao'))  $('#mtd_peso_execucao').value  = m.peso_execucao  ?? 30;
+      if($('#mtd_peso_melhoria'))  $('#mtd_peso_melhoria').value  = m.peso_melhoria  ?? 20;
+      if($('#mtd_peso_efeito'))    $('#mtd_peso_efeito').value    = m.peso_efeito    ?? 15;
+      if($('#mtd_topn'))           $('#mtd_topn').value           = m.topn           ?? 10;
+      if($('#mtd_tie'))            $('#mtd_tie').value            = m.tie            ?? 'impacto';
+      if($('#mtd_protocolo'))      $('#mtd_protocolo').value      = m.protocolo      ?? '';
+      if($('#mtd_refs'))           $('#mtd_refs').value           = m.refs           ?? '';
+    }
+  }
+  function saveMetodologia(){
+    const m={
+      peso_resultado:Number($('#mtd_peso_resultado')?.value||35),
+      peso_execucao:Number($('#mtd_peso_execucao')?.value||30),
+      peso_melhoria:Number($('#mtd_peso_melhoria')?.value||20),
+      peso_efeito:  Number($('#mtd_peso_efeito')?.value||15),
+      topn:         Number($('#mtd_topn')?.value||10),
+      tie:          $('#mtd_tie')?.value||'impacto',
+      protocolo:    $('#mtd_protocolo')?.value?.trim()||'',
+      refs:         $('#mtd_refs')?.value?.trim()||''
+    };
+    localStorage.setItem(MTD_KEY, JSON.stringify(m));
+  }
+
+  /* ===== Reset ===== */
+  function resetDia(){
+    const d=$('#reset_date').value; const idx=Number($('#reset_item').value||0);
+    if(!d){ alert('Selecione o dia'); return; }
+    const k=ANSWERS_PREFIX+d; const raw=localStorage.getItem(k);
+    if(!raw){ alert('Sem dados para este dia'); return; }
+    if(idx){
+      const arr=JSON.parse(raw||'[]');
+      if(idx<1||idx>20){ alert('Informe item entre 1 e 20'); return; }
+      if(!confirm('Zerar item '+idx+' do dia '+d+'?')) return;
+      arr[idx-1]=null; localStorage.setItem(k, JSON.stringify(arr));
+      alert('Item '+idx+' zerado no dia '+d+'.');
+    }else{
+      if(!confirm('Apagar respostas do dia '+d+'?')) return;
+      localStorage.removeItem(k); alert('Dia limpo.');
+    }
+  }
+  function resetGeral(){ if(!confirm('Apagar TUDO do app neste dispositivo?')) return; localStorage.clear(); alert('Tudo limpo. Recarregando…'); location.reload(); }
+
+  /* ===== Banco de Perguntas (dinâmico) + DEBUG ===== */
+  let QUESTOES={};
+  function dbg(msg,obj){ const box=$('#dbg'); if(!box) return; box.style.display='block'; box.innerHTML='<b>DEBUG</b>: '+msg+(obj?'<pre style="white-space:pre-wrap">'+(typeof obj==='string'?obj:JSON.stringify(obj,null,2))+'</pre>':''); }
+  function clearDbg(){ const box=$('#dbg'); if(box){ box.style.display='none'; box.textContent=''; } }
+
+  function buildStructure(rows){
+    const tree={};
+    (rows||[]).forEach(r=>{
+      const cat=String(r.Area||r.Categoria||'').trim();
+      const niv=String(r.Nivel||'').trim();
+      const cod=Number(r.Cod||r.COD||r.codigo||0);
+      const pergunta=String(r.Pergunta||r.pergunta||'').trim();
+      const exemplo=String(r.Exemplo||r.exemplo||'').trim();
+      if(!cat||!niv||!cod||!pergunta) return;
+      tree[cat]=tree[cat]||{}; tree[cat][niv]=tree[cat][niv]||[]; tree[cat][niv].push({cod,pergunta,exemplo});
+    });
+    return tree;
+  }
+  async function fetchFromSheets(){
+    const c=readCfg(); if(!(c.sheets_on && c.script_url)) throw new Error('Sheets desligado ou Apps Script vazio');
+    const url=c.script_url+(c.script_url.includes('?')?'&':'?')+'fn=getQuestions';
+    const res=await fetch(url,{method:'GET'});
+    if(!res.ok) throw new Error('Falha HTTP: '+res.status);
+    const json=await res.json(); const rows=json.data||json.rows||json||[];
+    if(!Array.isArray(rows)) throw new Error('JSON inesperado');
+    return rows;
+  }
+  async function sincronizarPerguntas(){
+    clearDbg(); dbg('Sincronizando da planilha…');
+    try{
+      const rows=await fetchFromSheets();
+      QUESTOES=buildStructure(rows);
+      localStorage.setItem(Q_KEY, JSON.stringify(QUESTOES));
+      renderAreas(); renderNiveis(); renderPerguntas();
+      dbg('OK: '+Object.keys(QUESTOES).length+' categorias carregadas.');
+      alert('Perguntas atualizadas da planilha.');
+    }catch(e){ dbg('Erro ao sincronizar', String(e&&e.message||e)); alert('Não foi possível atualizar: '+(e&&e.message||e)); }
+  }
+  function loadPerguntas(){
+    clearDbg(); const cache=localStorage.getItem(Q_KEY);
+    if(cache){ try{ QUESTOES=JSON.parse(cache)||{}; }catch{ QUESTOES={}; }}
+    if(!Object.keys(QUESTOES).length){ dbg('Cache vazio. Use "Recarregar da planilha".'); }
+  }
+
+  function categorias(){ return Object.keys(QUESTOES||{}); }
+  function niveis(cat){ return Object.keys((QUESTOES||{})[cat]||{}); }
+  function perguntas(cat,niv){ return ((QUESTOES||{})[cat]||{})[niv]||[]; }
+
+  function renderAreas(){ const s=$('#sel_area'); if(!s) return; s.innerHTML=''; const list=categorias(); if(!list.length){ dbg('Sem categorias disponíveis.'); return; } list.forEach(a=>{ const o=document.createElement('option'); o.textContent=a; s.appendChild(o); }); }
+  function renderNiveis(){ const s=$('#sel_nivel'); if(!s) return; s.innerHTML=''; const a=$('#sel_area').value; const list=niveis(a); if(!list.length){ dbg('Sem níveis para a categoria: '+a); return; } list.forEach(n=>{ const o=document.createElement('option'); o.textContent=n; s.appendChild(o); }); }
+  function renderPerguntas(){ const s=$('#sel_pergunta'); if(!s) return; const a=$('#sel_area').value; const n=$('#sel_nivel').value; const list=perguntas(a,n); s.innerHTML=''; if(!list.length){ dbg('Sem perguntas para '+a+' · '+n); return; } list.forEach(q=>{ const o=document.createElement('option'); o.value=String(q.cod); o.textContent=`${q.cod} — ${q.pergunta}`; s.appendChild(o); }); }
+  $('#sel_area')?.addEventListener('change', ()=>{ clearDbg(); renderNiveis(); renderPerguntas(); });
+  $('#sel_nivel')?.addEventListener('change', ()=>{ clearDbg(); renderPerguntas(); });
+
+  /* ===== Mapeamento ===== */
+  function salvarMapeamento(){
+    const categoria=$('#sel_area')?.value||''; const nivel=$('#sel_nivel')?.value||''; const codStr=$('#sel_pergunta')?.value||'';
+    if(!categoria||!nivel||!codStr){ alert('Selecione categoria, nível e pergunta.'); return; }
+    const cod=Number(codStr); const q=(perguntas(categoria,nivel)||[]).find(x=>x.cod===cod);
+    const exemplo=$('#exemplo')?.value?.trim()||q?.exemplo||'';
+    const arr=JSON.parse(localStorage.getItem(MAP_KEY)||'[]');
+    arr.unshift({cod, categoria, nivel, pergunta:q?.pergunta||'', exemplo});
+    localStorage.setItem(MAP_KEY, JSON.stringify(arr));
+    renderMap(); $('#exemplo').value='';
+  }
+  function delMap(cod){ const arr=JSON.parse(localStorage.getItem(MAP_KEY)||'[]'); const left=arr.filter(x=>x.cod!==cod); localStorage.setItem(MAP_KEY, JSON.stringify(left)); renderMap(); }
+  function limparMapeamento(){ if(!confirm('Limpar todos os mapeamentos locais?')) return; localStorage.removeItem(MAP_KEY); renderMap(); }
+  function renderMap(){
+    const body=$('#mapBody'); body.innerHTML='';
+    const arr=JSON.parse(localStorage.getItem(MAP_KEY)||'[]');
+    if(arr.length===0){ body.innerHTML=`<tr><td colspan="6" class="muted" style="text-align:center; padding:18px">Sem mapeamentos.</td></tr>`; return; }
+    arr.forEach(item=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>#${String(item.cod).padStart(3,'0')}</td><td>${item.categoria}</td><td>${item.nivel}</td><td>${item.pergunta}</td><td>${(item.exemplo||'—').replace(/</g,'&lt;')}</td><td class="act"><button class="btn bad" onclick="delMap(${item.cod})">🗑️</button></td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  /* ===== Init ===== */
+  (function init(){
+    carregarCfg();
+    loadPerguntas();
+    renderAreas(); renderNiveis(); renderPerguntas();
+    renderMap();
+  })();
+</script>
+</body>
+</html>

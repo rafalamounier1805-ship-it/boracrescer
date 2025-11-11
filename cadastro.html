@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bora… Crescer! — Cadastro (v2.5)</title>
+<meta name="theme-color" content="#0e0f13" />
+<style>
+  :root{
+    --bg:#0e0f13; --ink:#eaf0ff; --muted:#a9b0cf; --line:#2b3042;
+    --accent:#5fb3ff; --accent2:#f7d040; --ok:#67e5a1; --warn:#ffb454; --bad:#ff6b6b;
+    --panel:#171923; --panel2:#1c2030; --radius:18px; --pad:14px;
+    /* metálico */
+    --gridSize:56px; --gridDot:1.8px; --gridOpacity:.14; --grainOpacity:.07; --brushOpacity:.18;
+    --shineSpeed:9s;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:Inter,Segoe UI,system-ui,-apple-system,Roboto,Arial,sans-serif}
+
+  /* Fundo metálico (igual ao index) */
+  .metal-bg{position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden}
+  .metal-bg::before{content:""; position:absolute; inset:-20% -20% -20% -20%;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.08), transparent 60%),
+      linear-gradient(115deg, rgba(255,255,255,var(--brushOpacity)) 0%, rgba(255,255,255,0) 18%, rgba(255,255,255,0) 82%, rgba(255,255,255,var(--brushOpacity)) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,var(--grainOpacity)) 0 .7px, transparent 1px 6px);
+    animation:shine var(--shineSpeed) ease-in-out infinite alternate;
+  }
+  .metal-bg::after{content:""; position:absolute; inset:0; opacity:var(--gridOpacity);
+    background-image:radial-gradient(circle, rgba(255,255,255,.28) var(--gridDot), transparent var(--gridDot));
+    background-size:var(--gridSize) var(--gridSize)}
+  @keyframes shine{from{transform:translate3d(0,0,0)} to{transform:translate3d(0,-6px,0)}}
+
+  .wrap{min-height:100dvh; display:flex; flex-direction:column}
+  header{position:sticky; top:0; z-index:10; backdrop-filter:blur(8px);
+    background:linear-gradient(180deg, rgba(23,25,35,.92), rgba(23,25,35,.78)); border-bottom:1px solid var(--line)}
+  .head{display:flex; align-items:center; justify-content:space-between; padding:10px 14px; gap:10px}
+  .brand{display:flex; align-items:center; gap:10px}
+  .logo{width:38px; height:38px; border-radius:12px; display:grid; place-items:center; overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    background:radial-gradient(140% 140% at 30% 20%, #6ec1ff 0%, #1c2433 45%, #0e0f13 70%);
+    box-shadow: inset 0 0 12px rgba(255,255,255,.15), 0 0 30px rgba(95,179,255,.25)}
+  .brand h1{font-size:16px; margin:0; letter-spacing:.2px}
+  .actions a{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px;
+    color:var(--ink); text-decoration:none; border:1px solid var(--line); background:linear-gradient(180deg, #1b1f2c, #151826)}
+  .actions a:active{transform:translateY(1px)}
+
+  main{flex:1; padding:14px; display:grid; gap:14px; padding-bottom:92px}
+  @media(min-width:720px){ main{max-width:980px; margin:0 auto} }
+
+  .card{background:linear-gradient(180deg, var(--panel), var(--panel2)); border:1px solid var(--line);
+    border-radius:var(--radius); padding:var(--pad);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.03) inset, 0 6px 16px rgba(0,0,0,.35)}
+  .title{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+  .title h2{margin:0; font-size:14px; text-transform:uppercase; letter-spacing:.6px; color:#cfd6f3}
+  .muted{color:var(--muted); font-size:12px}
+  .row{display:grid; gap:10px}
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:719px){ .cols-2,.cols-3{grid-template-columns:1fr} }
+
+  label{font-size:12px; color:#c8d1f1}
+  input,select,textarea,button{max-width:100%}
+  input,select,textarea{width:100%; background:#121523; color:var(--ink); border:1px solid var(--line); border-radius:12px; padding:12px; font-size:14px; outline:none; transition:box-shadow .2s, border-color .2s}
+  textarea{min-height:90px; resize:vertical}
+  .neon:focus{border-color:transparent; box-shadow:0 0 0 2px #101320, 0 0 0 3px var(--accent)}
+
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;
+    background:linear-gradient(180deg, #1d2233, #121523); color:var(--ink); border:1px solid var(--line);
+    border-radius:12px; padding:12px 14px; font-weight:600; transition:transform .06s, box-shadow .2s, border-color .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn.ok{border-color:rgba(103,229,161,.45)}
+  .btn.warn{border-color:rgba(255,180,84,.45)}
+  .btn.bad{border-color:rgba(255,107,107,.45)}
+  .btn.accent{border-color:rgba(95,179,255,.55); box-shadow:0 0 0 1px rgba(95,179,255,.25) inset}
+
+  .pill{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); color:#cfd6f3; display:inline-flex; align-items:center; gap:6px}
+  .grid-tags{display:flex; flex-wrap:wrap; gap:8px}
+  .tag{user-select:none; cursor:pointer; border:1px solid var(--line); padding:8px 10px; border-radius:999px;
+    background:linear-gradient(180deg, #1a1f2e, #111624); font-size:13px}
+  .tag.active{box-shadow:0 0 0 2px #101320, 0 0 0 3px var(--accent)}
+
+  table{width:100%; border-collapse:separate; border-spacing:0; background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line); border-radius:14px}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px}
+  thead th{background:#1b2030; color:#cfe0ff; text-align:left}
+  tbody tr:hover{background:#151a28}
+  tbody tr:last-child td{border-bottom:0}
+
+  .footer{position:sticky; bottom:0; z-index:10; padding:10px 14px;
+    background:linear-gradient(180deg, rgba(23,25,35,.0), rgba(23,25,35,.85) 20%, rgba(23,25,35,.95));
+    border-top:1px solid var(--line); display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap}
+  .tabbar{position:fixed; inset:auto 0 0 0; z-index:9; display:flex; gap:8px; justify-content:space-around;
+    background:linear-gradient(180deg, rgba(17,20,35,.0), rgba(17,20,35,.92)); border-top:1px solid var(--line); padding:8px 10px}
+  .tab{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; color:#c7cef3; text-decoration:none}
+  .tab i{width:36px; height:36px; border-radius:12px; display:grid; place-items:center; border:1px solid var(--line); background:linear-gradient(180deg, #1b1f2c, #151826)}
+</style>
+</head>
+<body>
+<div class="metal-bg"></div>
+<div class="wrap">
+  <header>
+    <div class="head">
+      <div class="brand">
+        <div class="logo"><img src="123.png" alt="logo" onerror="this.remove()"/></div>
+        <h1>Bora… Crescer! <span class="muted">· Cadastro</span></h1>
+      </div>
+      <div class="actions">
+        <a href="index.html" title="Início">🏠</a>
+        <a href="config.html" title="Config">⚙️</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- DADOS PESSOAIS -->
+    <section class="card">
+      <div class="title"><h2>Dados de cadastro</h2><span class="muted">perfil do usuário</span></div>
+      <div class="row cols-3">
+        <div>
+          <label>Nome</label>
+          <input id="nome" class="neon" placeholder="Seu nome completo">
+        </div>
+        <div>
+          <label>Data de nascimento</label>
+          <input id="dob" type="date" class="neon">
+        </div>
+        <div>
+          <label>Email</label>
+          <input id="email" type="email" class="neon" placeholder="voce@empresa.com">
+        </div>
+        <div>
+          <label>Senha</label>
+          <input id="senha" type="password" class="neon" placeholder="••••••">
+        </div>
+        <div>
+          <label>Trocar senha</label>
+          <input id="senha2" type="password" class="neon" placeholder="Nova senha (opcional)">
+        </div>
+        <div>
+          <label>Avatar</label>
+          <input id="avatar" type="file" accept="image/*" class="neon">
+          <div style="display:flex; gap:10px; align-items:center; margin-top:8px">
+            <img id="avatarPreview" alt="preview" style="width:56px; height:56px; border-radius:14px; border:1px solid var(--line); object-fit:cover; display:none"/>
+            <span class="muted">JPG/PNG, ~1MB</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+        <button class="btn ok" onclick="salvarPerfil()">Salvar</button>
+        <button class="btn warn" onclick="limparPerfil()">Limpar</button>
+        <button class="btn bad" onclick="excluirPerfil()">Excluir</button>
+      </div>
+    </section>
+
+    <!-- PRINCIPAIS CATEGORIAS (máx 10) -->
+    <section class="card">
+      <div class="title"><h2>Principais categorias</h2><span class="pill">Selecione até 10</span></div>
+      <div id="cats" class="grid-tags"></div>
+    </section>
+
+    <!-- HISTÓRICO / EXPORTAÇÃO -->
+    <section class="card">
+      <div class="title"><h2>Histórico</h2><span class="muted">filtrar · exportar · apagar</span></div>
+      <div class="row cols-3">
+        <div>
+          <label>Período — de</label>
+          <input id="h_ini" type="date" class="neon">
+        </div>
+        <div>
+          <label>Período — até</label>
+          <input id="h_fim" type="date" class="neon">
+        </div>
+        <div>
+          <label>Cod (opcional)</label>
+          <input id="h_cod" type="number" class="neon" placeholder="filtrar por CÓD">
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0">
+        <button class="btn accent" onclick="listarHistorico()">Listar</button>
+        <button class="btn" onclick="exportarHistorico()">Exportar JSON</button>
+        <button class="btn" onclick="enviarEmail()">Enviar e-mail</button>
+        <button class="btn bad" onclick="apagarHistorico()">Apagar histórico</button>
+      </div>
+      <table>
+        <thead><tr><th>Data</th><th>Cod</th><th>Categoria</th><th>Nível</th><th>Resposta</th></tr></thead>
+        <tbody id="histBody"><tr><td colspan="5" class="muted" style="text-align:center; padding:16px">Use os filtros acima e clique em Listar.</td></tr></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div class="footer">
+    <div class="muted">Cadastro local · offline-first</div>
+  </div>
+
+  <nav class="tabbar">
+    <a class="tab" href="index.html" title="Início"><i>🏠</i><span>Início</span></a>
+    <a class="tab" href="cadastro.html" title="Cadastro"><i>🪪</i><span>Cadastro</span></a>
+    <a class="tab" href="config.html" title="Configurações"><i>⚙️</i><span>Config</span></a>
+  </nav>
+</div>
+
+<script>
+  const PROFILE_KEY='bc_profile_v1';
+  const CATS=[
+    'Evolução','Corpo','Mente','Espírito','Alma','Mundo','Educação','Trabalho','Finanças','Diário',
+    'Lojas','CD','Manipulação','Administrativo','Liderança','Atendimento','Operações','Qualidade','Segurança','Inovação'
+  ];
+  const $=s=>document.querySelector(s);
+
+  function loadProfile(){
+    try{
+      const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}');
+      $('#nome').value=p.nome||''; $('#dob').value=p.dob||''; $('#email').value=p.email||'';
+      if(p.avatar){ const img=$('#avatarPreview'); img.src=p.avatar; img.style.display='block'; }
+      const box=$('#cats'); box.innerHTML='';
+      CATS.forEach(cat=>{
+        const el=document.createElement('span'); el.className='tag'; el.textContent=cat;
+        if((p.categorias||[]).includes(cat)) el.classList.add('active');
+        el.onclick=()=>toggleCat(el,cat);
+        box.appendChild(el);
+      });
+    }catch(e){ console.warn(e); }
+  }
+  function toggleCat(el,cat){
+    const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}');
+    p.categorias=p.categorias||[];
+    const i=p.categorias.indexOf(cat);
+    if(i>=0){ p.categorias.splice(i,1); el.classList.remove('active'); }
+    else{
+      if(p.categorias.length>=10){ alert('Máximo de 10 categorias.'); return; }
+      p.categorias.push(cat); el.classList.add('active');
+    }
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+  }
+  $('#avatar')?.addEventListener('change', e=>{
+    const f=e.target.files?.[0]; if(!f) return;
+    const r=new FileReader(); r.onload=()=>{
+      const img=$('#avatarPreview'); img.src=r.result; img.style.display='block';
+      const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}'); p.avatar=r.result; localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+    };
+    r.readAsDataURL(f);
+  });
+
+  function salvarPerfil(){
+    const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}');
+    p.nome=$('#nome').value?.trim()||'';
+    p.dob=$('#dob').value||'';
+    p.email=$('#email').value?.trim()||'';
+    const s1=$('#senha').value||''; const s2=$('#senha2').value||''; if(s2) p.senha=s2; else if(s1) p.senha=s1;
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+    alert('Perfil salvo.');
+  }
+  function limparPerfil(){ if(!confirm('Limpar campos visíveis?')) return; ['#nome','#dob','#email','#senha','#senha2'].forEach(sel=>{$(sel).value=''}); $('#avatarPreview').style.display='none'; }
+  function excluirPerfil(){ if(!confirm('Excluir perfil deste dispositivo?')) return; localStorage.removeItem(PROFILE_KEY); loadProfile(); alert('Perfil excluído.'); }
+
+  // Histórico — leitura básica de chaves bc_answers_YYYY-MM-DD
+  function listarHistorico(){
+    const ini=$('#h_ini').value; const fim=$('#h_fim').value; const cod=Number($('#h_cod').value||0);
+    const body=$('#histBody'); body.innerHTML='';
+    const keys=Object.keys(localStorage).filter(k=>k.startsWith('bc_answers_'));
+    const rows=[];
+    keys.forEach(k=>{
+      const d=k.replace('bc_answers_','');
+      if(ini && d<ini) return; if(fim && d>fim) return;
+      try{
+        const arr=JSON.parse(localStorage.getItem(k)||'[]');
+        (arr||[]).forEach(item=>{
+          if(cod && item.cod!==cod) return;
+          rows.push({data:d, cod:item.cod, categoria:item.categoria||item.area||'', nivel:item.nivel||'', resp:item.resposta||item.valor||''});
+        });
+      }catch{}
+    });
+    if(!rows.length){ body.innerHTML='<tr><td colspan="5" class="muted" style="text-align:center; padding:16px">Sem dados no período.</td></tr>'; return; }
+    rows.sort((a,b)=>a.data<b.data?-1:1);
+    rows.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${r.data}</td><td>${r.cod||'—'}</td><td>${r.categoria||'—'}</td><td>${r.nivel||'—'}</td><td>${(r.resp??'').toString().slice(0,80)}</td>`;
+      body.appendChild(tr);
+    });
+  }
+  function exportarHistorico(){
+    const keys=Object.keys(localStorage).filter(k=>k.startsWith('bc_answers_'));
+    const dump={}; keys.forEach(k=> dump[k]=localStorage.getItem(k));
+    const blob=new Blob([JSON.stringify(dump)], {type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='bora_historico.json'; a.click(); URL.revokeObjectURL(a.href);
+  }
+  function enviarEmail(){
+    const mail='mailto:'+ (JSON.parse(localStorage.getItem('bc_config_v2')||'{}').mail_to||'') + '?subject='+encodeURIComponent('Histórico Bora… Crescer!')+'&body='+encodeURIComponent('Exporte o JSON no app e anexe ao e-mail.');
+    location.href=mail;
+  }
+  function apagarHistorico(){ if(!confirm('Apagar TODO o histórico deste dispositivo?')) return; Object.keys(localStorage).filter(k=>k.startsWith('bc_answers_')).forEach(k=>localStorage.removeItem(k)); alert('Histórico apagado.'); listarHistorico(); }
+
+  // Aplicar tema do Config
+  (function applyTheme(){
+    try{
+      const c=JSON.parse(localStorage.getItem('bc_config_v2')||'{}');
+      document.documentElement.style.setProperty('--accent', c.accent||'#5fb3ff');
+      document.documentElement.style.setProperty('--gridSize', (c.grid||56)+'px');
+      if((c.theme||'dark')==='light'){
+        document.documentElement.style.setProperty('--bg','#f5f7ff');
+        document.documentElement.style.setProperty('--ink','#0f1320');
+        document.documentElement.style.setProperty('--panel','#ffffff');
+        document.documentElement.style.setProperty('--panel2','#f0f3ff');
+        document.documentElement.style.setProperty('--line','#cfd6f3');
+      }
+    }catch{}
+  })();
+
+  loadProfile();
+</script>
+</body>
+</html>
