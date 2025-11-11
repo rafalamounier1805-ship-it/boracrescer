@@ -1,0 +1,6 @@
+# na pasta do projeto (onde está o index.html)
+printf '%s\n' '{ "headers": [ { "source": "/index.html", "headers": [ { "key": "Cache-Control", "value": "no-store" } ] }, { "source": "/123.png", "headers": [ { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" } ] } ] }' > vercel.json
+
+git add vercel.json
+git commit -m "chore: headers cache via vercel.json"
+git push
